@@ -1,0 +1,13 @@
+[
+    # Treat <gmock/gmock.h> as a facade to GTest headers
+    { include: ["@<gtest/.*>", private, "<gtest/gtest.h>", public] },
+    { include: ["@<gmock/.*>", private, "<gmock/gmock.h>", public] },
+
+    # XXX IWYU is missing some libc++ mappings
+    { include: [ "<__errc>", private, "<system_error>", public] },
+    { include: [ "<__locale>", private, "<locale>", public] },
+    { include: [ "<__hash_table>", private, "<unordered_map>", public] },
+    { include: [ "<__hash_table>", private, "<unordered_set>", public] },
+    { include: [ "<__tuple>", private, "<utility>", public]},
+    { include: [ "<__functional_base>", private, "<functional>", public] },
+]

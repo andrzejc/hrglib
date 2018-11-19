@@ -1,0 +1,7 @@
+{
+    "name": "foo",
+    "punc": "),",
+    "prepunc": "(",
+    "start_pos": 0,
+    "end_pos": 6
+}

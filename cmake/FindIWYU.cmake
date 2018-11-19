@@ -1,0 +1,3 @@
+include(FindPackageHandleStandardArgs)
+find_program(IWYU_EXECUTABLE NAMES iwyu include-what-you-use)
+find_package_handle_standard_args(IWYU DEFAULT_MSG IWYU_EXECUTABLE)

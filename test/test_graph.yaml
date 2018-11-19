@@ -1,0 +1,30 @@
+---
+nodes:
+  - features:
+      name: foo
+    relations:
+      Token:
+        id: 0
+        next: 1
+        first_child: 2
+        last_child: 3
+  - features:
+      name: "bar"
+    relations:
+      Token:
+        id: 1
+        prev: 0
+  - features: { name: "baz" }
+    relations:
+      Word: { id: 2, parent: 0, next: 3 }
+  - features:
+      name: "zaz"
+    relations:
+      Word: { id: 3, parent: 0, prev: 2 }
+relations:
+  Token:
+    first: 0
+    last: 1
+  Word:
+    first: 2
+    last: 3
