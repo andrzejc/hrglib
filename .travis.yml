@@ -5,15 +5,10 @@ os:
 compiler:
   - clang
   - gcc
-addons:
-  apt:
-    packages: [ninja]
-  homebrew:
-    packages: [ninja]
 before_script:
   - mkdir build
   - cd build
-  - cmake -GNinja ..
+  - cmake ..
 script:
-  - ninja
+  - make
   - ctest --output-on-failure
