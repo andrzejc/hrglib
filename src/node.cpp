@@ -16,8 +16,8 @@
 
 namespace hrglib {
 
-void detail::throw_null_navigator(const std::type_info& type) {
-    throw error::null_navigator_dereference{type};;
+void detail::throw_bad_dereference(const std::type_info& type) {
+    throw error::bad_dereference{type};;
 }
 
 relation_name node::relation_name() const noexcept {

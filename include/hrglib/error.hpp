@@ -5,6 +5,10 @@
 #pragma once
 #include "hrglib/types.hpp"
 #include "hrglib/string.hpp"
+#include "hrglib/feature_name.hpp"
+#include "hrglib/relation_name.hpp"
+
+#include <boost/format.hpp>
 
 #include <stdexcept>
 #include <typeinfo>
@@ -17,15 +21,17 @@ namespace error {
 
 string demangle(const std::type_info& ti);
 
+//! @brief Exception thrown when operation would result in invalid graph topology.
 struct bad_topology: std::runtime_error {
     using std::runtime_error::runtime_error;
     bad_topology(): bad_topology{"bad topology"} {}
 };
 
+//! @breif Exception throw when attempting to add node handle in relation which already
 struct relation_exists: bad_topology {
     const relation_name relation;
     explicit relation_exists(relation_name rel):
-        bad_topology{"relation exists"},
+        bad_topology{boost::str(boost::format("node already has relation %1%") % to_string(rel))},
         relation{rel}
     {}
 };
@@ -33,15 +39,15 @@ struct relation_exists: bad_topology {
 struct bad_relation: bad_topology {
     const relation_name relation;
     explicit bad_relation(relation_name rel):
-        bad_topology{"bad relation"},
+        bad_topology{boost::str(boost::format("relation %1% is not allowed") % to_string(rel))},
         relation{rel}
     {}
 };
 
-struct null_navigator_dereference: std::logic_error {
+struct bad_dereference: std::logic_error {
     const std::type_info& type;
-    null_navigator_dereference(const std::type_info& type):
-        logic_error{"null node dereference"},
+    bad_dereference(const std::type_info& type):
+        logic_error{boost::str(boost::format("dereference of null navigator of type %1%") % demangle(type))},
         type{type}
     {}
 };
@@ -62,24 +68,20 @@ struct invalid_feature_name: parsing_error {
 struct invalid_feature_type: parsing_error {
     const feature_name feature;
     const std::type_info* const expected_type;
-    const std::type_info* const runtime_type;
     explicit invalid_feature_type(
             const string& msg,
             feature_name feature,
-            const std::type_info* const expected_type = nullptr,
-            const std::type_info* const runtime_type = nullptr
+            const std::type_info* const expected_type = nullptr
     ):
         parsing_error{msg},
         feature{feature},
-        expected_type{expected_type},
-        runtime_type{runtime_type}
+        expected_type{expected_type}
     {}
     explicit invalid_feature_type(
             feature_name feature,
-            const std::type_info* const expected_type = nullptr,
-            const std::type_info* const runtime_type = nullptr
+            const std::type_info* const expected_type = nullptr
     ):
-        invalid_feature_type{"invalid feature type", feature, expected_type, runtime_type}
+        invalid_feature_type{"invalid feature type", feature, expected_type}
     {}
 };
 
