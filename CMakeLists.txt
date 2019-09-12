@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 3.7)
 
+# Python virtualenv support for Cog dependency
+if(EXISTS "${CMAKE_BINARY_DIR}/bin/python")
+    message(STATUS "Adding ${CMAKE_BINARY_DIR}/bin to CMAKE_PROGRAM_PATH")
+    list(APPEND CMAKE_PROGRAM_PATH "${CMAKE_BINARY_DIR}/bin")
+endif()
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(Coverage)
 
