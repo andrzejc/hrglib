@@ -4,6 +4,7 @@
  */
 #pragma once
 #include "hrglib/feature_name.hpp"
+#include "hrglib/feature_traits.hpp"
 #include "hrglib/optional.hpp"
 #include "hrglib/string.hpp"
 #include "hrglib/any.hpp"

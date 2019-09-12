@@ -19,7 +19,6 @@ template<relation_name> struct relation_traits;
 template<class NodeType, typename Comparator> class relation_iterator;
 
 enum struct feature_name;
-// template<feature_name> class feature;
 class features;
 template<feature_name> struct feature_traits;
 

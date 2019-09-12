@@ -9,6 +9,7 @@ set(SRCS
 )
 
 add_library(HrgLib ${SRCS})
+add_dependencies(HrgLib generate-headers)
 set_target_properties(HrgLib PROPERTIES
     OUTPUT_NAME hrg)
 target_link_libraries(HrgLib

@@ -1,0 +1,17 @@
+---
+- name: name
+  # the implied type is string
+  description: Name of the HRG node.
+- name: punc
+  description: (Post)punctuation chars after token.
+- name: prepunc
+  description: Prepunctuation chars before token.
+- name: whitespace
+  description: Whitespace chars after token.
+- name: start_pos
+  type: size_t
+  description: Char index of the start of this node in the utterance graph.
+- name: end_pos
+  type: size_t
+  description: Char index past end of this node in utterance graph.
+...
