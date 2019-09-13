@@ -2,13 +2,17 @@ language: c++
 os:
   - linux
   - osx
+dist: bionic
+sudo: required
 compiler:
   - clang
   - gcc
+install:
+  - ci/install_deps.sh
 before_script:
   - mkdir build
   - cd build
-  - cmake ..
+  - cmake -GNinja ..
 script:
-  - make
+  - ninja
   - ctest --output-on-failure

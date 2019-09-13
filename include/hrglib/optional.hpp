@@ -8,5 +8,5 @@
 
 namespace hrglib {
 using boost::optional;
-constexpr auto nullopt = boost::none;
+const auto nullopt = boost::none;
 }

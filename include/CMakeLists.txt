@@ -19,7 +19,7 @@ install(
     DIRECTORY
         hrglib
         "${CMAKE_CURRENT_BINARY_DIR}/hrglib"
-    DESTINATION include
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
     FILES_MATCHING REGEX "\\.(h|hxx|hpp|yaml)$"
     EXCLUDE PATTERN "*.in.*"
     )
