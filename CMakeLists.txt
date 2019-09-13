@@ -1,12 +1,7 @@
 cmake_minimum_required(VERSION 3.7)
 
-# Python virtualenv support for Cog dependency
-if(EXISTS "${CMAKE_BINARY_DIR}/bin/python")
-    message(STATUS "Adding ${CMAKE_BINARY_DIR}/bin to CMAKE_PROGRAM_PATH")
-    list(APPEND CMAKE_PROGRAM_PATH "${CMAKE_BINARY_DIR}/bin")
-endif()
-
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
 include(Coverage)
 
 project(HrgLib
@@ -18,6 +13,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
 include(IWYU)
 include(CTest)
+include(PythonVirtualEnv)
+
+# We use python cog package as build tool
+python_virtualenv_setup(VERSION 3.6)
 
 find_package(gsl-lite REQUIRED)
 find_package(Boost REQUIRED)
