@@ -23,16 +23,41 @@ namespace {
 //! specialization/enable_if implementation matching, which
 //! is impossible with ordinary functions.
 template<typename FeatureType, typename = void>
-struct yaml_interop {
+struct yaml_parser {
     //! @param feat_label aids error localization.
     static any read(feature_name feat_label, const YAML::Node& value) {
         try {
             return {value.as<FeatureType>()};
-        } catch (YAML::Exception& ex) {
-            throw error::invalid_feature_type{ex.what(), feat_label, &typeid(FeatureType)};
+        } catch (YAML::BadConversion& ex) {
+            string val = value.IsScalar() ? value.Scalar() : "";
+            throw error::invalid_feature_type{ex.what(), std::move(val), feat_label, typeid(FeatureType)};
         }
     }
+};
 
+template<typename FeatureType>
+struct yaml_parser<FeatureType, std::enable_if_t<std::is_unsigned<FeatureType>::value>> {
+    //! @param feat_label aids error localization.
+    static any read(feature_name feat_label, const YAML::Node& value) {
+        try {
+            FeatureType val = value.as<FeatureType>();
+            if (value.Scalar().front() == '-') {
+                throw error::invalid_feature_type{value.Scalar(), feat_label, typeid(FeatureType)};
+            }
+            return {value.as<FeatureType>()};
+        } catch (YAML::BadConversion& ex) {
+            string val = value.IsScalar() ? value.Scalar() : "";
+            throw error::invalid_feature_type{ex.what(), std::move(val), feat_label, typeid(FeatureType)};
+        }
+    }
+};
+
+//! Parse JSON @p value into @c any of type @p FeatureType.
+//! Use struct not funtion because of powerful partial
+//! specialization/enable_if implementation matching, which
+//! is impossible with ordinary functions.
+template<typename FeatureType, typename = void>
+struct formatter {
     static string format(feature_name feat_label, const any& val) {
         std::ostringstream s;
         s << any_cast<const FeatureType&>(val);
@@ -64,7 +89,7 @@ using parser_map_entry_t = typename parser_map_t::value_type;
 #define PARSER_MAP_ENTRY(feat, type, comment) \
     parser_map_entry_t{ \
         {typeid(feature_t<F:: feat >)}, \
-        {&yaml_interop<feature_t<F:: feat >>::read, &yaml_interop<feature_t<F:: feat >>::format} \
+        {&yaml_parser<feature_t<F:: feat >>::read, &formatter<feature_t<F:: feat >>::format} \
     },
 
 const parser_map_t parser_map = {

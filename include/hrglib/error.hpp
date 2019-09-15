@@ -60,28 +60,36 @@ struct parsing_error: std::runtime_error {
 struct invalid_feature_name: parsing_error {
     const string feature_name;
     explicit invalid_feature_name(string feature_name):
-        parsing_error{"invalid feature name"},
+        parsing_error{boost::str(boost::format("feature name %1% is invalid") % feature_name)},
         feature_name{std::move(feature_name)}
     {}
 };
 
 struct invalid_feature_type: parsing_error {
+    const string value;
     const feature_name feature;
-    const std::type_info* const expected_type;
+    const std::type_info& expected_type;
     explicit invalid_feature_type(
             const string& msg,
+            string value,
             feature_name feature,
-            const std::type_info* const expected_type = nullptr
+            const std::type_info& expected_type
     ):
         parsing_error{msg},
+        value{std::move(value)},
         feature{feature},
         expected_type{expected_type}
     {}
     explicit invalid_feature_type(
+            string value,
             feature_name feature,
-            const std::type_info* const expected_type = nullptr
+            const std::type_info& expected_type
     ):
-        invalid_feature_type{"invalid feature type", feature, expected_type}
+        invalid_feature_type{
+            boost::str(boost::format("value %1% in not covertible to type %2% when reading feature %3%")
+                % value % demangle(expected_type) % to_string(feature)),
+            std::move(value), feature, expected_type
+        }
     {}
 };
 
