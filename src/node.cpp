@@ -13,6 +13,7 @@
 #include <utility>
 #include <unordered_map>
 #include <cassert>
+#include <stdexcept>
 
 namespace hrglib {
 

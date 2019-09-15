@@ -11,7 +11,6 @@
 #include <unordered_map>
 #include <cassert>
 #include <iterator>
-#include <utility>
 #include <cstddef>
 
 namespace hrglib { namespace {

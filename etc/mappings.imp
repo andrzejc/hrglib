@@ -3,6 +3,9 @@
     { include: ["@<gtest/.*>", private, "<gtest/gtest.h>", public] },
     { include: ["@<gmock/.*>", private, "<gmock/gmock.h>", public] },
 
+    { include: ["@<boost/format/.*>", private, "<boost/format.hpp>", public] },
+    { include: ["@<boost/optional/.*>", private, "<boost/optional.hpp>", public ]},
+
     # XXX IWYU is missing some libc++ mappings
     { include: [ "<__errc>", private, "<system_error>", public] },
     { include: [ "<__locale>", private, "<locale>", public] },

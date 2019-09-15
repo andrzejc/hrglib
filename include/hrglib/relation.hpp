@@ -44,7 +44,6 @@ protected:
     {}
 
     relation(relation&&) = default;
-    relation& operator=(relation&&) = default;
 
     relation& set_first_(node* n) {
         first_ = n;
