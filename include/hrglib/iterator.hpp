@@ -12,7 +12,7 @@ template<typename Iterator> struct sentinel {};
 
 template<class DerivedIterator>
 struct with_sentinel {
-    using sentinel = sentinel<DerivedIterator>;
+    using sentinel = iterator::sentinel<DerivedIterator>;
 
     friend constexpr bool operator!=(const DerivedIterator& lhs, sentinel) noexcept {
         return lhs.has_next();
