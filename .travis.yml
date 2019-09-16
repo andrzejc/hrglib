@@ -10,9 +10,9 @@ compiler:
 install:
   - ci/install_deps.sh
 before_script:
-  - mkdir build
+  - mkdir -p build
   - cd build
-  - cmake -GNinja ..
+  - cmake -GNinja "-DCMAKE_PREFIX_PATH=$PWD/deps/install" ..
 script:
   - ninja
   - ctest --output-on-failure

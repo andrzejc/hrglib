@@ -3,14 +3,24 @@ set -eux
 set -o pipefail
 
 function cmake_install() {
-    local dir="${1}"
+    local dir="$1"
     shift
-    local build_dir="${dir}/build"
+    local build_dir="build/${dir}"
     mkdir -p "${build_dir}"
-    ( cd "${build_dir}" && cmake -GNinja "$@" .. )
+    build_dir=$(cd "${build_dir}" && pwd)
+    local root="$PWD"
+    dir=$(cd "${dir}" && pwd)
+    (
+        cd "${build_dir}"
+        cmake \
+            -GNinja \
+            "-DCMAKE_INSTALL_PREFIX=${root}/build/deps/install" \
+            "$@" \
+            "${dir}"
+    )
     cmake --build "${build_dir}"
     # ( cd "${build_dir}" && ctest --output-on-failure )
-    sudo $(command -v cmake) --build "${build_dir}" --target install
+    cmake --build "${build_dir}" --target install
 }
 
 [[ ! -x ci/install_deps.${TRAVIS_OS_NAME}.sh ]] || \
