@@ -11,7 +11,8 @@ add_custom_command(
         Cog
         hrglib/feature_list.in.hpp
         hrglib/features.yaml
-    VERBATIM)
+    VERBATIM
+)
 
 add_custom_target(generate-headers DEPENDS hrglib/feature_list.hpp)
 
@@ -21,5 +22,5 @@ install(
         "${CMAKE_CURRENT_BINARY_DIR}/hrglib"
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
     FILES_MATCHING REGEX "\\.(h|hxx|hpp|yaml)$"
-    EXCLUDE PATTERN "*.in.*"
-    )
+    PATTERN "*.in.*" EXCLUDE
+)

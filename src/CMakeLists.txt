@@ -27,11 +27,8 @@ target_include_directories(HrgLib
     PRIVATE
         "${YAML_CPP_INCLUDE_DIRS}"
 )
-install(TARGETS HrgLib EXPORT HrgLib
+install(TARGETS HrgLib EXPORT "${pkg_target}"
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
-install(EXPORT HrgLib
-    NAMESPACE HrgLib::
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/HrgLib"
-)
+add_library("${pkg_name}::HrgLib" ALIAS HrgLib)

@@ -1,6 +1,6 @@
 #pragma once
 
-#if __has_include(<variant>)
+#if defined(__has_include) && !!__has_include(<variant>)
 # include <variant>
 namespace hrglib {
 using std::variant;

@@ -13,10 +13,15 @@ function(python_virtualenv_setup)
         set(python_pkg Python)
         set(pyexe_var Python_EXECUTABLE)
     endif()
+    if(WIN32)
+        set(exe_dir Scripts)
+    else()
+        set(exe_dir bin)
+    endif()
     if(NOT IS_ABSOLUTE "${arg_DIR}")
         set(arg_DIR "${CMAKE_CURRENT_BINARY_DIR}/${arg_DIR}")
     endif()
-    if(NOT EXISTS "${arg_DIR}/bin/python" AND NOT arg_NO_CREATE)
+    if(NOT EXISTS "${arg_DIR}/${exe_dir}/python${CMAKE_EXECUTABLE_SUFFIX}" AND NOT arg_NO_CREATE)
         message(STATUS "Installing python virtualenv in ${arg_DIR}...")
         find_package(${python_pkg} ${arg_VERSION} REQUIRED)
         execute_process(
@@ -29,7 +34,7 @@ function(python_virtualenv_setup)
         if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt")
             message(STATUS "Installing python requirements in virtualenv...")
             execute_process(
-                COMMAND "${arg_DIR}/bin/python" -m pip
+                COMMAND "${arg_DIR}/${exe_dir}/python${CMAKE_EXECUTABLE_SUFFIX}" -m pip
                     install  --no-warn-script-location
                         -r "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt"
                 RESULT_VARIABLE res
@@ -39,9 +44,9 @@ function(python_virtualenv_setup)
             endif()
         endif()
     endif()
-    if(EXISTS "${arg_DIR}/bin/python")
-        message(STATUS "Adding ${arg_DIR}/bin to CMAKE_PROGRAM_PATH")
-        list(APPEND CMAKE_PROGRAM_PATH "${arg_DIR}/bin")
+    if(EXISTS "${arg_DIR}/${exe_dir}/python${CMAKE_EXECUTABLE_SUFFIX}")
+        message(STATUS "Adding ${arg_DIR}/${exe_dir} to CMAKE_PROGRAM_PATH")
+        list(APPEND CMAKE_PROGRAM_PATH "${arg_DIR}/${exe_dir}")
         set(CMAKE_PROGRAM_PATH "${CMAKE_PROGRAM_PATH}" PARENT_SCOPE)
         unset(${pyexe_var} CACHE)
         find_package(${python_pkg} ${arg_VERSION} REQUIRED)

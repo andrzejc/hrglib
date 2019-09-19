@@ -13,7 +13,8 @@ function cmake_install() {
     (
         cd "${build_dir}"
         cmake \
-            -GNinja \
+            "-G${CMAKE_GENERATOR:-Ninja}" \
+            "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE:-RelWithDebInfo}" \
             "-DCMAKE_INSTALL_PREFIX=${root}/build/deps/install" \
             "$@" \
             "${dir}"
@@ -24,13 +25,19 @@ function cmake_install() {
 }
 
 [[ ! -x ci/install_deps.${TRAVIS_OS_NAME}.sh ]] || \
-    "ci/install_deps.${TRAVIS_OS_NAME}.sh"
+    source "ci/install_deps.${TRAVIS_OS_NAME}.sh"
 
 cmake_install deps/gsl-lite \
     -DGSL_LITE_OPT_BUILD_TESTS=OFF
 cmake_install deps/yaml-cpp \
     -DYAML_CPP_BUILD_TESTS=OFF \
     -DYAML_CPP_BUILD_TOOLS=OFF
-cmake_install deps/googletest
+cmake_install deps/googletest \
+    -Dgtest_force_shared_crt=ON
+# cmake_install deps/boost \
+#     -DBOOST_DOWNLOAD_TO_BINARY_DIR=ON
 
 sudo -H python3 -m pip install virtualenv
+
+set +u
+set +x
