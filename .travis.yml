@@ -29,9 +29,11 @@ matrix:
     - os: osx
       compiler: gcc
   include:
-    - os: windows
+    - name: msvc14.1
+      os: windows
       env: MSVC=cl
-    - os: windows
+    - name: clang7.0
+      os: windows
       env: MSVC=clang-cl
 before_cache:
   - find $HOME/.choco_cache -name '*.log' -delete

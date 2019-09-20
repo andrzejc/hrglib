@@ -5,36 +5,42 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(Coverage)
 
 project(HrgLib
-    VERSION 0.0.0
+    VERSION 0.0.1
     DESCRIPTION "Heterogenous Relation Graph Object Model Library"
 )
+
+if(PROJECT_NAME STREQUAL CMAKE_PROJECT_NAME)
+    set(HRGLIB_IS_TOPLEVEL TRUE)
+endif()
+option(BUILD_TESTING "Build tests?" "${HRGLIB_IS_TOPLEVEL}")
+option(BUILD_SHARED_LIBS "Build shared libs?" "${BUILD_SHARED_LIBS}")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
-include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 include(IWYU)
-include(CTest)
 include(PythonVirtualEnv)
 
 # We use python cog package as build tool
 python_virtualenv_setup(VERSION 3.6)
 
-# Public
-find_package(gsl-lite REQUIRED)
-find_package(Boost REQUIRED)
+option(BUILD_INTERNAL_DEPS "Build deps as internal subprojects?" OFF)
+if(BUILD_INTERNAL_DEPS)
+    add_subdirectory(deps/gsl-lite)
+    add_subdirectory(deps/yaml-cpp)
+    add_subdirectory(deps/googletest)
+else()
+    # Public
+    find_package(gsl-lite REQUIRED)
+    find_package(Boost REQUIRED)
 
-# Private
-find_package(yaml-cpp REQUIRED)
+    # Private
+    find_package(yaml-cpp REQUIRED)
+    find_package(GTest REQUIRED)
+endif()
 
-set(pkg_name    "${PROJECT_NAME}")
-set(pkg_version "${${PROJECT_NAME}_VERSION}")
-set(pkg_target  "${pkg_name}Targets")
-
-message(STATUS "Project '${PROJECT_NAME}', package '${pkg_name}' version: '${pkg_version}'")
-
-if(MSVC OR CMAKE_CXX_SIMULATE_ID STREQUAL MSVC)
+if(MSVC OR CMAKE_CXX_SIMULATE_ID MATCHES MSVC)
     add_compile_definitions(
         _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
         _CRT_SECURE_NO_WARNINGS
@@ -47,29 +53,25 @@ add_subdirectory(src)
 add_subdirectory(test)
 add_subdirectory(docs)
 
-set(cmake_files_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${pkg_name}")
-
-set(version_file "${CMAKE_CURRENT_BINARY_DIR}/${pkg_name}ConfigVersion.cmake")
-write_basic_package_version_file(
-    "${version_file}"
-    COMPATIBILITY AnyNewerVersion
-)
-
-set(config_file "${CMAKE_CURRENT_BINARY_DIR}/${pkg_name}Config.cmake")
-configure_package_config_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake.in"
-    "${config_file}"
-    INSTALL_DESTINATION "${cmake_files_install_dir}"
-)
-
+set(export_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 install(
-    EXPORT "${pkg_target}"
-    NAMESPACE "${pkg_name}::"
-    DESTINATION "${cmake_files_install_dir}"
+    EXPORT      "${PROJECT_NAME}Targets"
+    NAMESPACE   "${PROJECT_NAME}::"
+    DESTINATION "${export_dir}"
+)
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    "${PROJECT_NAME}ConfigVersion.cmake"
+    COMPATIBILITY SameMajorVersion
+)
+configure_package_config_file(
+    cmake/Config.cmake.in
+    "${PROJECT_NAME}Config.cmake"
+    INSTALL_DESTINATION "${export_dir}"
 )
 install(
     FILES
-        "${version_file}"
-        "${config_file}"
-    DESTINATION "${cmake_files_install_dir}"
+        "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+    DESTINATION "${export_dir}"
 )

@@ -1,7 +1,7 @@
 
 if(BUILD_TESTING)
+    enable_testing()
     option(TESTS_SEPARATE_EXECUTABLES "Build testsuites as separate executables?" OFF)
-    find_package(GTest REQUIRED)
 
     set(TESTS
         test_feature_name
