@@ -38,7 +38,7 @@ struct feature_traits_impl {
 #define HRGLIB_FEATURE_TYPE(feat, type) \
 template<> struct feature_traits<F:: feat> : detail::feature_traits_impl<type> {}
 
-#define HRGLIB_FEATURE_TYPE_VISITOR(feat, type, ignore) \
+#define HRGLIB_FEATURE_TYPE_VISITOR(feat, type, ...) \
     HRGLIB_FEATURE_TYPE(feat, type);
 
 HRGLIB_FEATURE_LIST(HRGLIB_FEATURE_TYPE_VISITOR)

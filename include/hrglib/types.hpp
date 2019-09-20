@@ -27,8 +27,4 @@ template<relation_name> class node_;
 template<class NodeType> class node_navigator;
 
 class graph;
-
-class token;
-class word;
-class syllable;
 }  // namespace hrglib

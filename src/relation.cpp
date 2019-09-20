@@ -85,9 +85,7 @@ node& relation::prepend(node* in_other_relation) {
         first_->set_prev_(&res);
         first_ = &res;
     } else {
-        if (last_ != nullptr) {
-            throw error::bad_topology{"relation inconsistency: missing first node when last set"};
-        }
+        assert(last_ == nullptr);
         first_ = (last_ = &res);
     }
     return res;

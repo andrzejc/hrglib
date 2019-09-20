@@ -20,25 +20,26 @@ namespace error {
 
 string demangle(const std::type_info& ti);
 
-//! @brief Exception thrown when operation would result in invalid graph topology.
-struct bad_topology: std::runtime_error {
-    using std::runtime_error::runtime_error;
-    bad_topology(): bad_topology{"bad topology"} {}
+//! @brief Exception thrown when node is inadequate for the operation.
+struct bad_node: std::invalid_argument {
+    const hrglib::node* const node = nullptr;
+    using std::invalid_argument::invalid_argument;
+    bad_node(): bad_node{"bad node"} {}
 };
 
-//! @breif Exception throw when attempting to add node handle in relation which already
-struct relation_exists: bad_topology {
+//! @brief Exception throw when attempting to add node handle in relation which already exists.
+struct relation_exists: bad_node {
     const relation_name relation;
     explicit relation_exists(relation_name rel):
-        bad_topology{str(format("node already has relation %1%") % to_string(rel))},
+        bad_node{str(format("node already has relation %1%") % to_string(rel))},
         relation{rel}
     {}
 };
 
-struct bad_relation: bad_topology {
+struct bad_relation: bad_node {
     const relation_name relation;
     explicit bad_relation(relation_name rel):
-        bad_topology{str(format("node in relation %1% is not allowed") % to_string(rel))},
+        bad_node{str(format("node in relation %1% is not allowed") % to_string(rel))},
         relation{rel}
     {}
 };

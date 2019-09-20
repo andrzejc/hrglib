@@ -10,7 +10,7 @@ namespace hrglib {
 //! @brief Defines feature labels as compile-time constants; generated
 //!     from `HRGLIB_FEATURE_LIST()` macro.
 enum struct feature_name {
-#define HRGLIB_FEATURE_ENUMERATOR(label, type, comment)  label,
+#define HRGLIB_FEATURE_ENUMERATOR(label, ...)  label,
     HRGLIB_FEATURE_LIST(HRGLIB_FEATURE_ENUMERATOR)
 #undef HRGLIB_FEATURE_ENUMERATOR
     //! @brief "metadata" constant for performing compile-time validity checks;

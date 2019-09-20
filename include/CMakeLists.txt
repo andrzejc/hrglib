@@ -14,7 +14,25 @@ add_custom_command(
     VERBATIM
 )
 
-add_custom_target(generate-headers DEPENDS hrglib/feature_list.hpp)
+add_custom_command(
+    OUTPUT hrglib/relation_list.hpp
+    COMMAND Cog
+            -d
+            -o hrglib/relation_list.hpp
+            -D "RELATIONS_YAML=${CMAKE_CURRENT_SOURCE_DIR}/hrglib/relations.yaml"
+            "${CMAKE_CURRENT_SOURCE_DIR}/hrglib/relation_list.in.hpp"
+    DEPENDS
+        Cog
+        hrglib/relation_list.in.hpp
+        hrglib/relations.yaml
+    VERBATIM
+)
+
+add_custom_target(generate-headers
+    DEPENDS
+        hrglib/feature_list.hpp
+        hrglib/relation_list.hpp
+)
 
 install(
     DIRECTORY

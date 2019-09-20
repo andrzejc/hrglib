@@ -1,0 +1,22 @@
+---
+- name: Token
+  node_type: token
+  child: Word
+  parent: Phrase
+  description: Foo.
+- name: Word
+  node_type: word
+  parent: Token
+  child: Syllable
+  description: Bar.
+- name: Syllable
+  node_type: syllable
+  parent: Word
+  description: Baz.
+- name: SylStructure
+  parent: SylStructure
+  child: SylStructure
+- name: Phrase
+  node_type: phrase
+  child: Token
+...
