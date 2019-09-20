@@ -1,6 +1,6 @@
 find_package(Doxygen)
-option(BUILD_DOCS "Build API docs?" "${DOXYGEN_FOUND}")
-if(BUILD_DOCS)
+option(HRGLIB_BUILD_DOCS "Build API docs?" "${DOXYGEN_FOUND}")
+if(HRGLIB_BUILD_DOCS)
     find_package(Doxygen REQUIRED)
     set(DOXYGEN_MACRO_EXPANSION YES)
     set(DOXYGEN_BUILTIN_STL_SUPPORT YES)
