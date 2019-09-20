@@ -17,15 +17,13 @@ target_link_libraries(HrgLib
         Boost::boost
         gsl::gsl-lite
     PRIVATE
-        "${YAML_CPP_LIBRARIES}"
+        yaml-cpp
 )
 target_include_directories(HrgLib
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-    PRIVATE
-        "${YAML_CPP_INCLUDE_DIRS}"
 )
 install(
     TARGETS HrgLib

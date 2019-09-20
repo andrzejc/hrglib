@@ -30,15 +30,18 @@ if(BUILD_INTERNAL_DEPS)
     add_subdirectory(deps/gsl-lite)
     add_subdirectory(deps/yaml-cpp)
     add_subdirectory(deps/googletest)
+    add_library(GTest::GTest ALIAS gtest)
+    add_library(GTest::Main ALIAS gtest_main)
 else()
     # Public
     find_package(gsl-lite REQUIRED)
-    find_package(Boost REQUIRED)
 
     # Private
     find_package(yaml-cpp REQUIRED)
     find_package(GTest REQUIRED)
 endif()
+
+find_package(Boost REQUIRED)
 
 if(MSVC OR CMAKE_CXX_SIMULATE_ID MATCHES MSVC)
     add_compile_definitions(

@@ -11,7 +11,7 @@ if(BUILD_TESTING)
     )
 
     set(TEST_SRCS)
-    set(TEST_DEPS HrgLib GTest::GTest GTest::Main)
+    set(TEST_DEPS HrgLib yaml-cpp GTest::GTest GTest::Main)
     set(TEST_DEFS HRGLIB_YAMLCPP_PUBLIC)
 
     function(add_test_target name sources)
