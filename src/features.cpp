@@ -44,7 +44,7 @@ struct yaml_parser<FeatureType, std::enable_if_t<std::is_unsigned<FeatureType>::
             if (value.Scalar().front() == '-') {
                 throw error::invalid_feature_type{value.Scalar(), feat_label, typeid(FeatureType)};
             }
-            return {value.as<FeatureType>()};
+            return {std::move(val)};
         } catch (YAML::BadConversion& ex) {
             string val = value.IsScalar() ? value.Scalar() : "";
             throw error::invalid_feature_type{ex.what(), std::move(val), feat_label, typeid(FeatureType)};

@@ -62,7 +62,7 @@ void node::release_contents(const hrglib::relation& r) noexcept {
         assert(map_find(cont_.relations, r.name()));
         assert(this == &map_find(cont_.relations, r.name())->get());
         auto num = cont_.relations.erase(r.name());
-        assert(1 == num);
+        assert(1 == num); (void) num;
     }
 }
 
