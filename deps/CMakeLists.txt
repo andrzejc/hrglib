@@ -1,0 +1,24 @@
+if(HRGLIB_BUILD_INTERNAL_gsl-lite)
+    message(STATUS "Building internal gsl-lite...")
+    add_subdirectory(gsl-lite)
+endif()
+
+if(HRGLIB_BUILD_INTERNAL_yaml-cpp)
+    message(STATUS "Building internal yaml-cpp...")
+    # Yaml tests use GTest built as external project which conflicts
+    # set(YAML_CPP_INSTALL OFF CACHE BOOL "")
+    set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "")
+    add_subdirectory(yaml-cpp)
+endif()
+
+if(HRGLIB_BUILD_INTERNAL_GTest)
+    message(STATUS "Building internal GTest...")
+    # GTest by default uses static crt on msvc toolchain which conflicts with other libs
+    if(MSVC OR CMAKE_CXX_SIMULATE_ID MATCHES MSVC)
+        set(gtest_force_shared_crt ON CACHE BOOL "")
+    endif()
+    set(INSTALL_GTEST OFF CACHE BOOL "")
+    add_subdirectory(googletest)
+    add_library(GTest::GTest ALIAS gtest)
+    add_library(GTest::Main ALIAS gtest_main)
+endif()

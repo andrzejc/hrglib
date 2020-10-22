@@ -1,3 +1,5 @@
+find_package(Boost REQUIRED)
+
 set(SRCS
     error.cpp
     feature_name.cpp
@@ -31,4 +33,4 @@ install(
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
-add_library("${PROJECT_NAME}::HrgLib" ALIAS HrgLib)
+add_library(${PROJECT_NAME}::HrgLib ALIAS HrgLib)

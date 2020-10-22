@@ -1,19 +1,18 @@
 cmake_minimum_required(VERSION 3.7)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+set(CMAKE_USER_MAKE_RULES_OVERRIDE cmake/MakeRulesOverride.cmake)
 
-include(Coverage)
-
-project(HrgLib
+project(HRGLIB
     VERSION 0.0.1
     DESCRIPTION "Heterogenous Relation Graph Object Model Library"
+    LANGUAGES CXX
 )
 
 if(PROJECT_NAME STREQUAL CMAKE_PROJECT_NAME)
     set(HRGLIB_IS_TOPLEVEL TRUE)
 endif()
 option(HRGLIB_BUILD_TESTING "Build tests?" "${HRGLIB_IS_TOPLEVEL}")
-# option(BUILD_SHARED_LIBS "Build shared libs?" "${BUILD_SHARED_LIBS}")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
@@ -25,31 +24,30 @@ include(PythonVirtualEnv)
 # We use python cog package as build tool
 python_virtualenv_setup(VERSION 3.6)
 
-# Public
-# Boost must be installed externally, too big, too popular
-find_package(Boost REQUIRED)
+include(FindPackageOrEnableInternalDep)
 
-option(HRGLIB_BUILD_INTERNAL_DEPS "Build (some) deps as internal subprojects? NOTE: Boost must be externally-available!" OFF)
-if(HRGLIB_BUILD_INTERNAL_DEPS)
-    add_subdirectory(deps/gsl-lite)
-    # Yaml tests use GTest built as external project which conflicts
-    set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "")
-    add_subdirectory(deps/yaml-cpp)
-    # GTest by default uses static crt on msvc toolchain which conflicts with other libs
-    if(MSVC OR CMAKE_CXX_SIMULATE_ID MATCHES MSVC)
-        set(gtest_force_shared_crt ON CACHE BOOL "")
-    endif()
-    add_subdirectory(deps/googletest)
-    add_library(GTest::GTest ALIAS gtest)
-    add_library(GTest::Main ALIAS gtest_main)
-else()
-    # Public
-    find_package(gsl-lite REQUIRED)
-
-    # Private
-    find_package(yaml-cpp REQUIRED)
-    find_package(GTest REQUIRED)
+find_package_or_enable_internal_dep(HRGLIB_BUILD_INTERNAL_gsl-lite gsl-lite)
+find_package_or_enable_internal_dep(HRGLIB_BUILD_INTERNAL_yaml-cpp yaml-cpp)
+if(HRGLIB_BUILD_TESTING)
+    find_package_or_enable_internal_dep(HRGLIB_BUILD_INTERNAL_GTest GTest)
 endif()
+
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    foreach(lang IN ITEMS C CXX)
+        foreach(cfg IN ITEMS "" "_${CMAKE_BUILD_TYPE}")
+            string(TOUPPER "${cfg}" cfg)
+            if(CMAKE_${lang}_FLAGS${cfg})
+                string(REGEX REPLACE "(^| )-g([0-9]*)( |$)" "\\1-ggdb3\\3"
+                        "CMAKE_${lang}_FLAGS${cfg}" "${CMAKE_${lang}_FLAGS${cfg}}")
+                message(STATUS  "CMAKE_${lang}_FLAGS${cfg}: ${CMAKE_${lang}_FLAGS${cfg}}")
+            endif()
+        endforeach()
+    endforeach()
+    add_compile_options(-fdiagnostics-color=always)
+endif()
+
+add_subdirectory(deps)
 
 if(MSVC OR CMAKE_CXX_SIMULATE_ID MATCHES MSVC)
     add_compile_definitions(
