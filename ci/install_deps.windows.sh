@@ -10,11 +10,11 @@ function choco {
 
 mkdir -p "$HOME/.choco_cache"
 choco install \
-    python3 \
+    python3 --params "/InstallDir:C:\\Python3"
 
     # doxygen.install
 
-export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+export PATH="/c/Python3:/c/Python3/Scripts:$PATH"
 
 # emulate sudo for script portability
 function sudo {
@@ -29,7 +29,7 @@ function python3 {
 
 curl https://bootstrap.pypa.io/get-pip.py | sudo -H python3
 
-# XXX msvc boost is enaough for header-only libraries
+# XXX msvc boost is enough for header-only libraries
 choco install \
     boost-msvc-14.1 \
     ninja

@@ -40,7 +40,6 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
             if(CMAKE_${lang}_FLAGS${cfg})
                 string(REGEX REPLACE "(^| )-g([0-9]*)( |$)" "\\1-ggdb3\\3"
                         "CMAKE_${lang}_FLAGS${cfg}" "${CMAKE_${lang}_FLAGS${cfg}}")
-                message(STATUS  "CMAKE_${lang}_FLAGS${cfg}: ${CMAKE_${lang}_FLAGS${cfg}}")
             endif()
         endforeach()
     endforeach()

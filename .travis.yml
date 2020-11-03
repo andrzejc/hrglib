@@ -22,7 +22,7 @@ before_script:
 script:
   - ninja
   - ctest --output-on-failure
-matrix:
+jobs:
   exclude:
     - os: windows
       compiler: clang
