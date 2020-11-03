@@ -6,8 +6,8 @@ os:
 dist: bionic
 sudo: required
 compiler:
-  - clang
   - gcc
+  - clang
 install:
   - source ci/install_deps.sh
 before_script:
