@@ -14,6 +14,7 @@ before_script:
   - mkdir -p build && cd build
   - >
     cmake
+    -Wno-dev
     -GNinja
     "-DCMAKE_PREFIX_PATH=$PWD/deps/install"
     "-DCMAKE_INSTALL_PREFIX=$PWD/install"

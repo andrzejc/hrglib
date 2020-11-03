@@ -38,35 +38,31 @@ export BOOST_ROOT=c:\\local\\boost_1_67_0
 export BOOST_INCLUDEDIR="${BOOST_ROOT}\\boost"
 export BOOST_LIBRARYDIR="${BOOST_ROOT}\\lib64-msvc-14.1"
 
-function winls {
-    cmd.exe /C "dir \"$1\""
-}
-
 if [[ -z "${MSVC:-}" ]]
 then
     # TODO build boost from sources, cache the build dir on travis?
     true
 else
     choco install \
-        windows-sdk-10.0
+        windows-sdk-10.1 --version 10.1.18362.1 || cat $HOME/.choco_cache/windows-sdk-10.1.log
 
-    # winls C:\\Program\ Files\ \(x86\)\\Windows\ Kits
+    kits="/c/Program Files (x86)/Windows Kits"
+    # ls -l "$kits"
+    # ls -l "$kits/10"
     UniversalCRTSdkDir=C:\\Program\ Files\ \(x86\)\\Windows\ Kits\\10\\
-    # winls "${UniversalCRTSdkDir}"
-    UCRTVersion=10.0.17134.0
-    # winls C:\\Program\ Files\ \(x86\)\\Windows\ Kits\\NETFXSDK
-    NETFXSDKDir=C:\\Program\ Files\ \(x86\)\\Windows\ Kits\\NETFXSDK\\4.6.2\\
-    # winls "${NETFXSDKDir}"
-    # winls "${UniversalCRTSdkDir}Include\\"
+    UCRTVersion=10.0.18362.0
+    # ls -l "$kits/NETFXSDK"
+    NETFXSDKDir=C:\\Program\ Files\ \(x86\)\\Windows\ Kits\\NETFXSDK\\4.8\\
+    # ls -l "$kits/NETFXSDK/4.8"
+    # ls -l "$kits/10/include"
+    # ls -l "$kits/10/lib"
     UCRTInclude="${UniversalCRTSdkDir}Include\\${UCRTVersion}\\"
-    # winls "${UCRTInclude}"
     UCRTLib="${UniversalCRTSdkDir}lib\\${UCRTVersion}\\"
-    # winls "${UCRTLib}"
+    # ls -l "$kits/10/include/$UCRTVersion"
+    # ls -l "$kits/10/lib/$UCRTVersion"
     VSEdition=BuildTools
     VCVersion=14.16.27023
-    # bin\\Hostx64\\x64\\
     VCToolsInstallDir=c:\\Program\ Files\ \(x86\)\\Microsoft\ Visual\ Studio\\2017\\${VSEdition}\\VC\\Tools\\MSVC\\${VCVersion}\\
-    # winls "${VCToolsInstallDir}"
     INCLUDE="${VCToolsInstallDir}include"
     INCLUDE+=";${UCRTInclude}ucrt;${NETFXSDKDir}include\\um;${UCRTInclude}shared;${UCRTInclude}um;${UCRTInclude}winrt"
     LIB="${VCToolsInstallDir}lib\\x64"

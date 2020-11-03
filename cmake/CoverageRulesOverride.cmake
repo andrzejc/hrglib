@@ -12,13 +12,15 @@ string(TOUPPER "${Coverage_BASE_CONFIGURATION}" Coverage_BASE_CONFIGURATION)
 set(_Coverage_C_CXX_COMMON_FLAGS)
 set(_Coverage_DYNAMIC_LINKER_FLAGS)
 set(_Coverage_STATIC_LINKER_FLAGS)
+set(Coverage_SUPPORTED OFF)
 
-if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+include("${CMAKE_CURRENT_LIST_DIR}/CCompilerCliSyntax.cmake")
+
+if(CMAKE_C_COMPILER_CLI_SYNTAX_GNU)
     #  -fprofile-abs-path
-    set(_Coverage_C_CXX_COMMON_FLAGS "${_Coverage_C_CXX_COMMON_FLAGS} -fprofile-arcs -ftest-coverage -ggdb3")
+    set(_Coverage_C_CXX_COMMON_FLAGS "${_Coverage_C_CXX_COMMON_FLAGS} -fprofile-arcs -ftest-coverage")
     set(_Coverage_DYNAMIC_LINKER_FLAGS "${_Coverage_DYNAMIC_LINKER_FLAGS} -fprofile-arcs")
-else() 
-    message(WARNING "Coverage is not available with compiler ${CMAKE_C_COMPILER_ID}")
+    set(Coverage_SUPPORTED ON)
 endif()
 
 set(CMAKE_CXX_FLAGS_COVERAGE_INIT "${CMAKE_CXX_FLAGS_${Coverage_BASE_CONFIGURATION}_INIT} ${_Coverage_C_CXX_COMMON_FLAGS}")
@@ -31,8 +33,6 @@ set(CMAKE_STATIC_LINKER_FLAGS_COVERAGE_INIT "${CMAKE_STATIC_LINKER_FLAGS_${Cover
 
 get_property(_Coverage_GENERATOR_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 
-if(_Coverage_GENERATOR_MULTI_CONFIG)
-    if(NOT "Coverage" IN_LIST CMAKE_CONFIGURATION_TYPES)
-        list(APPEND CMAKE_CONFIGURATION_TYPES Coverage)
-    endif()
+if(Coverage_SUPPORTED AND _Coverage_GENERATOR_MULTI_CONFIG AND NOT "Coverage" IN_LIST CMAKE_CONFIGURATION_TYPES)
+    list(APPEND CMAKE_CONFIGURATION_TYPES Coverage)
 endif()
