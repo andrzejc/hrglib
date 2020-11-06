@@ -4,7 +4,9 @@
  */
 #pragma once
 #include "hrglib/types.hpp"
+#include "hrglib/relation_list.hpp"
 #include "hrglib/relation_name.hpp"
+#include "hrglib/relation_types.hpp"
 
 namespace hrglib {
 /**
@@ -13,8 +15,8 @@ namespace hrglib {
  * Fully-defined `relation_traits` has the following members:
  * * `typedef node_type`, subclass of `node_<Rel>`;
  * * `typedef relation_type`, subclass of `relation_<Rel>`;
- * * `static constexpr relation_name PARENT_RELATION`;
- * * `static constexpr relation_name CHILD_RELATION`;
+ * * `static constexpr relation_name parent_relation`;
+ * * `static constexpr relation_name child_relation`;
  * @tparam Rel `relation_name` whose properties are defined.
  */
 template<relation_name Rel>
@@ -31,8 +33,8 @@ struct relation_traits_impl {
     static constexpr relation_name NAME = Rel;
     using node_type = NodeType;
     using relation_type = RelationType;
-    static constexpr relation_name PARENT_RELATION = ParentRel;
-    static constexpr relation_name CHILD_RELATION = ChildRel;
+    static constexpr relation_name parent_relation = ParentRel;
+    static constexpr relation_name child_relation = ChildRel;
 };
 }
 
@@ -40,8 +42,8 @@ struct relation_traits_impl {
 //! @param rel `relation_name` to define.
 //! @param node_class value for `node_type` member.
 //! @param relation_class value for `relation_type` member.
-//! @param parent_rel value for `PARENT_RELATION` member.
-//! @param child_rel value for `CHILD_RELATION` member.
+//! @param parent_rel value for `parent_relation` member.
+//! @param child_rel value for `child_relation` member.
 #define HRGLIB_RELATION_DEF(rel, node_class, relation_class, parent_rel, child_rel) \
 template<> \
 struct relation_traits<rel>: \
@@ -54,11 +56,11 @@ struct relation_traits<R::INVALID>;
 
 //! @brief Convenience compile-time expression for name of parent relation of @p rel.
 template<relation_name rel>
-constexpr relation_name parent_relation = relation_traits<rel>::PARENT_RELATION;
+constexpr relation_name parent_relation = relation_traits<rel>::parent_relation;
 
 //! @brief Convenience compile-time expression for name of child relation of @p rel.
 template<relation_name rel>
-constexpr relation_name child_relation = relation_traits<rel>::CHILD_RELATION;
+constexpr relation_name child_relation = relation_traits<rel>::child_relation;
 
 //! @brief Relation-specific `node` subclass type (eg. `token`, `word`).
 template<relation_name rel>
@@ -68,8 +70,8 @@ using node_t = typename relation_traits<rel>::node_type;
 template<relation_name rel>
 using relation_t = typename relation_traits<rel>::relation_type;
 
-HRGLIB_RELATION_DEF(R::Token, token, relation_<R::Token>, R::INVALID, R::Word);
-HRGLIB_RELATION_DEF(R::Word, word, relation_<R::Word>, R::Token, R::Syllable);
-HRGLIB_RELATION_DEF(R::Syllable, syllable, relation_<R::Syllable>, R::Word, R::INVALID);
-HRGLIB_RELATION_DEF(R::SylStructure, node_<R::SylStructure>, relation_<R::SylStructure>, R::SylStructure, R::SylStructure);
+#define HRGLIB_RELATION_DEF_VISITOR(rel, node_class, relation_class, parent_rel, child_rel, ...) \
+    HRGLIB_RELATION_DEF(R:: rel, node_class, relation_class, R:: parent_rel, R:: child_rel);
+
+HRGLIB_RELATION_LIST(HRGLIB_RELATION_DEF_VISITOR)
 }  // namespace hrglib

@@ -21,7 +21,7 @@ class graph;
 
 class relation: private std::unordered_set<unique_ptr<node>> {
     using base = std::unordered_set<unique_ptr<node>>;
-    graph& graph_;
+    hrglib::graph& graph_;
     const relation_name name_;
     node* first_ = nullptr;
     node* last_ = nullptr;
@@ -34,17 +34,16 @@ class relation: private std::unordered_set<unique_ptr<node>> {
     }
 
 #ifdef HRGLIB_YAMLCPP_PUBLIC
-    friend YAML::Emitter& operator << (YAML::Emitter& out, const graph& g);
+    friend YAML::Emitter& operator << (YAML::Emitter& out, const hrglib::graph& g);
 #endif
 
 protected:
-    explicit relation(graph& g, relation_name rel):
+    explicit relation(hrglib::graph& g, relation_name rel):
         graph_{g},
         name_{rel}
     {}
 
     relation(relation&&) = default;
-    relation& operator=(relation&&) = default;
 
     relation& set_first_(node* n) {
         first_ = n;
@@ -58,9 +57,9 @@ protected:
 public:
     virtual ~relation() = default;
 
-    using factory_type = std::function<unique_ptr<relation>(graph&, relation_name)>;
+    using factory_type = std::function<unique_ptr<relation>(hrglib::graph&, relation_name)>;
     struct default_factory {
-        unique_ptr<relation> operator()(graph& g, relation_name rel) const;
+        unique_ptr<relation> operator()(hrglib::graph& g, relation_name rel) const;
     };
 
     using name_mapper_type = std::function<relation_name(string_view)>;
@@ -110,7 +109,7 @@ public:
 template<relation_name rel>
 class relation_: public relation {
     using base = relation;
-    using node_t = node_t<rel>;
+    using node_t = hrglib::node_t<rel>;
     // using parent_node_t = typename relation_traits<rel>::parent_type;
     // using child_node_t = typename relation_traits<rel>::children_type;
 

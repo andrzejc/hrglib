@@ -13,11 +13,12 @@
 #include <utility>
 #include <unordered_map>
 #include <cassert>
+#include <stdexcept>
 
 namespace hrglib {
 
-void detail::throw_null_navigator(const std::type_info& type) {
-    throw error::null_navigator_dereference{type};;
+void detail::throw_bad_dereference(const std::type_info& type) {
+    throw error::bad_dereference{type};;
 }
 
 relation_name node::relation_name() const noexcept {
@@ -61,7 +62,7 @@ void node::release_contents(const hrglib::relation& r) noexcept {
         assert(map_find(cont_.relations, r.name()));
         assert(this == &map_find(cont_.relations, r.name())->get());
         auto num = cont_.relations.erase(r.name());
-        assert(1 == num);
+        assert(1 == num); (void) num;
     }
 }
 

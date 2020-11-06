@@ -1,0 +1,44 @@
+language: cpp
+os:
+  - linux
+  - osx
+  - windows
+dist: bionic
+sudo: required
+compiler:
+  - gcc
+  - clang
+install:
+  - source ci/install_deps.sh
+before_script:
+  - mkdir -p build && cd build
+  - >
+    cmake
+    -Wno-dev
+    -GNinja
+    "-DCMAKE_PREFIX_PATH=$PWD/deps/install"
+    "-DCMAKE_INSTALL_PREFIX=$PWD/install"
+    "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE:-RelWithDebInfo}"
+    ..
+script:
+  - ninja
+  - ctest --output-on-failure
+jobs:
+  exclude:
+    - os: windows
+      compiler: clang
+    - os: osx
+      compiler: gcc
+  include:
+    - name: msvc14.1
+      os: windows
+      env: MSVC=cl
+    - name: clang7.0
+      os: windows
+      env: MSVC=clang-cl
+before_cache:
+  - find $HOME/.choco_cache -name '*.log' -delete
+cache:
+  ccache: true
+  directories:
+    - $HOME/.choco_cache

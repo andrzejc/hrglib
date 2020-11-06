@@ -21,12 +21,15 @@ class relation;
 //! @brief Represents a HRG graph node in some specific `relation` which is known only
 //!    at runtime.
 class node {
+    friend hrglib::relation;
+    using rel_t = hrglib::relation;
+    using rel_name_t = hrglib::relation_name;
     //! @brief Represents shared node contents; contains the `features` and `node_map` instances.
     struct contents;
     //! @brief Holds the contents shared among `node` handles in different relations.
     contents& cont_;
     //! @brief Backreference to `relation` this node belongs to.
-    relation& rel_;
+    rel_t& rel_;
     //! @brief Prev node in the same relation.
     node* prev_ = nullptr;
     //! @brief Next node in the same relation.
@@ -47,8 +50,8 @@ class node {
     //! @return reference to updated or new instance of `contents`.
     //! @throw error::relation_exists if @p in_other_relation's contents already has a `node` in
     //!     which belongs to `relation` @p r.
-    contents& attach_contents(const relation& r, node* in_other_relation);
-    void release_contents(const relation& r) noexcept;
+    contents& attach_contents(const rel_t& r, node* in_other_relation);
+    void release_contents(const rel_t& r) noexcept;
 
     //! @brief Remove parent's references to this, via `first_child_` and `last_child_`.
     void unlink_parent();
@@ -73,10 +76,6 @@ class node {
         return *pos;
     }
 
-    friend class relation;
-    using rel_t = relation;
-    using rel_name_t = relation_name;
-
 protected:
     // Less evil helper to avoid duplication when writing trivial getters.
     // Should not be used outside this particular use case, hence uglied name.
@@ -85,7 +84,7 @@ protected:
         return const_cast<ThisType&>(self);
     }
     //
-    explicit node(relation& rel, node *in_other_relation = nullptr):
+    explicit node(rel_t& rel, node *in_other_relation = nullptr):
         cont_{attach_contents(rel, in_other_relation)},
         rel_{rel}
     {}
@@ -95,17 +94,17 @@ protected:
     node& set_parent_(node* n);
     node& set_first_child_(node* n);
     node& set_last_child_(node* n);
-    const std::function<bool(const relation& parent, const relation& child)>& relation_validator() const noexcept;
+    const std::function<bool(const rel_t& parent, const rel_t& child)>& relation_validator() const noexcept;
 
 public:
     //! @brief Type of function used for validating parent<->child links created with `set_parent()` and
     //!     `set_first_child()`/`set_last_child()` APIs. This function is a property of the
     //!     `graph` this `node` belongs to.
-    using relation_validator_type = std::function<bool(const relation& parent, const relation& child)>;
+    using relation_validator_type = std::function<bool(const rel_t& parent, const rel_t& child)>;
     //! @brief Default implementation of `relation_validator_type` which validates the parent<->child relations
     //!     based on the built-in `relation_traits` specializations.
     struct default_relation_validator {
-        bool operator()(const relation& parent, const relation& child) const;
+        bool operator()(const rel_t& parent, const rel_t& child) const;
     };
 
     virtual ~node() noexcept;
@@ -321,9 +320,9 @@ public:
 //! @tparam rel relation label to specialize node for.
 template<relation_name rel>
 class node_: public detail::node_with_children_<node_t<rel>, child_relation<rel>, parent_relation<rel>> {
-    using base = detail::node_with_children_<node_t<rel>, child_relation<rel>, parent_relation<rel>>;
+    using base = detail::node_with_children_<hrglib::node_t<rel>, child_relation<rel>, parent_relation<rel>>;
     using rel_t = relation_t<rel>;
-    using node_t = node_t<rel>;
+    using node_t = hrglib::node_t<rel>;
     friend node::default_factory;
 
 protected:

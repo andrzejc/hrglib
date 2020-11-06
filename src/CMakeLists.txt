@@ -1,3 +1,5 @@
+find_package(Boost REQUIRED)
+
 set(SRCS
     error.cpp
     feature_name.cpp
@@ -9,28 +11,26 @@ set(SRCS
 )
 
 add_library(HrgLib ${SRCS})
+add_dependencies(HrgLib generate-headers)
 set_target_properties(HrgLib PROPERTIES
     OUTPUT_NAME hrg)
 target_link_libraries(HrgLib
     PUBLIC
         Boost::boost
-        gsl-lite::gsl-lite
+        gsl::gsl-lite
     PRIVATE
-        "${YAML_CPP_LIBRARIES}"
+        yaml-cpp
 )
 target_include_directories(HrgLib
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-    PRIVATE
-        "${YAML_CPP_INCLUDE_DIRS}"
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-install(TARGETS HrgLib EXPORT HrgLib
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
+install(
+    TARGETS HrgLib
+    EXPORT  "${PROJECT_NAME}Targets"
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
-install(EXPORT HrgLib
-    NAMESPACE HrgLib::
-    DESTINATION lib/cmake/HrgLib
-)
+add_library(${PROJECT_NAME}::HrgLib ALIAS HrgLib)

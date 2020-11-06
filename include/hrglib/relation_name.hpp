@@ -12,7 +12,7 @@ namespace hrglib {
 //! @brief Defines relation labels as compile-time constants; generated
 //!     from `HRGLIB_RELATION_LIST()` macro.
 enum struct relation_name {
-#define HRGLIB_RELATION_ENUMERATOR(relation)  relation,
+#define HRGLIB_RELATION_ENUMERATOR(relation, ...)  relation,
     HRGLIB_RELATION_LIST(HRGLIB_RELATION_ENUMERATOR)
 #undef HRGLIB_RELATION_ENUMERATOR
     //! @brief "metadata" constant for performing compile-time validity checks;

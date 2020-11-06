@@ -1,6 +1,12 @@
 #include "hrglib/error.hpp"
 
+#if defined(__has_include) && !!__has_include(<cxxabi.h>)
+# define HAVE_CXXABI_H
+#endif
+
+#ifdef HAVE_CXXABI_H
 #include <cxxabi.h>
+#endif
 
 #include <memory>
 #include <cstdlib>   // for free
@@ -22,15 +28,17 @@ namespace hrglib::error {
 // }
 
 string demangle(const std::type_info& type) {
+#ifdef HAVE_CXXABI_H
     int status = 0;
     auto name = std::unique_ptr<char, void(*)(void*)>{
             abi::__cxa_demangle(type.name(), 0, 0, &status), std::free};
     if (0 == status) {
         return {name.get()};
-    } else {
+    } else
+#endif
+    {
         // XXX log some error or sth
         return {type.name()};
     }
 }
-
 }

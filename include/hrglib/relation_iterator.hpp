@@ -49,7 +49,7 @@ public:
 
     constexpr explicit operator bool() const noexcept { return bool{curr_}; }
 
-    //! @throw null_navigator_dereference if at end.
+    //! @throw bad_dereference if at end.
     NodeType& operator*() const { return *nav(); }
 
     relation_iterator& operator++() {

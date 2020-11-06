@@ -8,7 +8,7 @@
 
 namespace hrglib { namespace detail {
 [[noreturn]]
-void throw_null_navigator(const std::type_info& t);
+void throw_bad_dereference(const std::type_info& t);
 
 template<class NodeType>
 class node_navigator_base {
@@ -16,7 +16,7 @@ protected:
     NodeType* pos_;
     NodeType* deref() const {
         if (nullptr == pos_) {
-            throw_null_navigator(typeid(NodeType));
+            throw_bad_dereference(typeid(NodeType));
         }
         return pos_;
     }

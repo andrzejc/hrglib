@@ -14,27 +14,36 @@
 
 namespace hrglib::test {
 
-TEST(node, null_dereference) {
+TEST(node, null_navigator_dereference_throws) {
     graph g;
     auto& n = g.at(R::Token).create();
     static_assert(std::is_same_v<decltype(n), node&>, "");
-    EXPECT_THROW(*n.next(), error::null_navigator_dereference);
-    EXPECT_THROW(*n.prev(), error::null_navigator_dereference);
-    EXPECT_THROW(*n.parent(), error::null_navigator_dereference);
-    EXPECT_THROW(*n.first_child(), error::null_navigator_dereference);
-    EXPECT_THROW(*n.last_child(), error::null_navigator_dereference);
-    EXPECT_THROW(*n.as(R::Word), error::null_navigator_dereference);
-    EXPECT_THROW(*n.as<R::Word>(), error::null_navigator_dereference);
-    EXPECT_THROW(*n.as<word>(), error::null_navigator_dereference);
+    EXPECT_THROW(*n.next(), error::bad_dereference);
+    EXPECT_THROW(*n.prev(), error::bad_dereference);
+    EXPECT_THROW(*n.parent(), error::bad_dereference);
+    EXPECT_THROW(*n.first_child(), error::bad_dereference);
+    EXPECT_THROW(*n.last_child(), error::bad_dereference);
+    EXPECT_THROW(*n.as(R::Word), error::bad_dereference);
+    EXPECT_THROW(*n.as<R::Word>(), error::bad_dereference);
+    EXPECT_THROW(*n.as<word>(), error::bad_dereference);
     // operator-> performs dereference to invoke node method
-    EXPECT_THROW(n.next()->next(), error::null_navigator_dereference);
-    EXPECT_THROW(n.prev()->next(), error::null_navigator_dereference);
-    EXPECT_THROW(n.parent()->next(), error::null_navigator_dereference);
-    EXPECT_THROW(n.first_child()->next(), error::null_navigator_dereference);
-    EXPECT_THROW(n.last_child()->next(), error::null_navigator_dereference);
-    EXPECT_THROW(n.as(R::Word)->next(), error::null_navigator_dereference);
-    EXPECT_THROW(n.as<R::Word>()->next(), error::null_navigator_dereference);
-    EXPECT_THROW(n.as<word>()->next(), error::null_navigator_dereference);
+    EXPECT_THROW(n.next()->next(), error::bad_dereference);
+    EXPECT_THROW(n.prev()->next(), error::bad_dereference);
+    EXPECT_THROW(n.parent()->next(), error::bad_dereference);
+    EXPECT_THROW(n.first_child()->next(), error::bad_dereference);
+    EXPECT_THROW(n.last_child()->next(), error::bad_dereference);
+    EXPECT_THROW(n.as(R::Word)->next(), error::bad_dereference);
+    EXPECT_THROW(n.as<R::Word>()->next(), error::bad_dereference);
+    EXPECT_THROW(n.as<word>()->next(), error::bad_dereference);
+}
+
+TEST(node, duplicate_relation_throws) {
+    graph g;
+    auto& n = g.at<R::Token>().create();
+    auto& w = g.at<R::Word>().create(&n);
+    ASSERT_TRUE(n.as<R::Word>());
+    EXPECT_EQ(*n.as<R::Word>(), w);
+    EXPECT_THROW(g.at<R::Word>().create(&n), error::relation_exists);
 }
 
 TEST(node_navigator, traversal_does_not_throw) {

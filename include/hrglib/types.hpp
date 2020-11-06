@@ -19,7 +19,6 @@ template<relation_name> struct relation_traits;
 template<class NodeType, typename Comparator> class relation_iterator;
 
 enum struct feature_name;
-// template<feature_name> class feature;
 class features;
 template<feature_name> struct feature_traits;
 
@@ -28,8 +27,4 @@ template<relation_name> class node_;
 template<class NodeType> class node_navigator;
 
 class graph;
-
-class token;
-class word;
-class syllable;
 }  // namespace hrglib

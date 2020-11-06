@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#if __has_include(<any>)
+#if defined(__has_include) && !!__has_include(<any>)
 # include <any>
 namespace hrglib {
 using std::any;

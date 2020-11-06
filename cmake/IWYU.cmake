@@ -4,7 +4,7 @@ else()
     set(_IWYUModuleIncluded TRUE)
 endif()
 
-option(ENABLE_IWYU "Enable Include-what-you use?" OFF)
+option(ENABLE_IWYU "Enable Include-what-you-use?" OFF)
 if(ENABLE_IWYU)
     find_package(IWYU REQUIRED)
     set(IWYU_COMMAND "${IWYU_EXECUTABLE}" -Xiwyu "--mapping_file=${CMAKE_SOURCE_DIR}/etc/mappings.imp")
