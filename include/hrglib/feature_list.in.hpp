@@ -29,16 +29,3 @@ with open(FEATURES_YAML) as f:
     //[[[end]]]
 
 #endif
-#ifndef HRGLIB_FEATURE_TYPE_LIST
-/**
- * @brief Second-order macro used as a canonical source for emitting all dependent feature type lists,
- *     including the specialization of `hrglib::feature_value_t` variant.
- */
-#define HRGLIB_FEATURE_TYPE_LIST(visitor) \
-    /*[[[cog
-for index, feat_type in enumerate(feat_types):
-    cog.outl(f"visitor({index}, {feat_type}) \\")
-    ]]]*/
-    //[[[end]]]
-
-#endif
