@@ -166,7 +166,7 @@ graph graph::from_yaml(const YAML::Node& doc, optional<builder> b) {
                 for (auto&& prop: ensure_object(node, "nodes element")) {
                     const auto prop_key = prop.first.as<string>();
                     if ("features" == prop_key) {
-                        np.features = features::from_yaml(prop.second, g.feature_name_mapper());
+                        np.features = features::from_yaml(prop.second);
                     } else if ("relations" == prop_key) {
                         np.parse_relations(ensure_object(prop.second, prop_key), g.relation_name_mapper());
                     } else {

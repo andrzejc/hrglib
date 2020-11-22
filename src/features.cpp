@@ -24,7 +24,7 @@ namespace {
 template<typename FeatureType, typename = void>
 struct yaml_parser {
     //! @param feat_label aids error localization.
-    static any read(feature_name feat_label, const YAML::Node& value) {
+    static feature_value parse(feature_name feat_label, const YAML::Node& value) {
         try {
             return {value.as<FeatureType>()};
         } catch (YAML::BadConversion& ex) {
@@ -35,9 +35,9 @@ struct yaml_parser {
 };
 
 template<typename FeatureType>
-struct yaml_parser<FeatureType, std::enable_if_t<std::is_unsigned<FeatureType>::value>> {
+struct yaml_parser<FeatureType, std::enable_if_t<std::is_unsigned_v<FeatureType>>> {
     //! @param feat_label aids error localization.
-    static any read(feature_name feat_label, const YAML::Node& value) {
+    static feature_value parse(feature_name feat_label, const YAML::Node& value) {
         try {
             FeatureType val = value.as<FeatureType>();
             if (value.Scalar().front() == '-') {
@@ -51,21 +51,17 @@ struct yaml_parser<FeatureType, std::enable_if_t<std::is_unsigned<FeatureType>::
     }
 };
 
-//! Parse JSON @p value into @c any of type @p FeatureType.
-//! Use struct not funtion because of powerful partial
-//! specialization/enable_if implementation matching, which
-//! is impossible with ordinary functions.
 template<typename FeatureType, typename = void>
-struct formatter {
-    static string format(feature_name feat_label, const any& val) {
+struct yaml_formatter {
+    static string format(feature_name feat_label, const feature_value& val) {
         std::ostringstream s;
-        s << any_cast<const FeatureType&>(val);
+        s << std::get<FeatureType>(val);
         return s.str();
     }
 };
 
-using feature_value_from_yaml_t = any (*)(feature_name, const YAML::Node& value);
-using feature_to_string_t = string(*)(feature_name, const any& val);
+using feature_value_from_yaml_t = feature_value (*)(feature_name, const YAML::Node& value);
+using feature_to_string_t = string(*)(feature_name, const feature_value& val);
 
 using type_info_ref_t = std::reference_wrapper<const std::type_info>;
 struct type_info_hasher {
@@ -85,14 +81,14 @@ using parser_map_entry_t = typename parser_map_t::value_type;
 #define PARSER_MAP_ENTRY(feat, type, comment) \
     parser_map_entry_t{ \
         {typeid(feature_t<F:: feat >)}, \
-        {&yaml_parser<feature_t<F:: feat >>::read, &formatter<feature_t<F:: feat >>::format} \
+        {&yaml_parser<feature_t<F:: feat >>::parse, &yaml_formatter<feature_t<F:: feat >>::format} \
     },
 
 const parser_map_t parser_map = {
     HRGLIB_FEATURE_LIST(PARSER_MAP_ENTRY)
 };
 
-any feature_value_from_yaml(const YAML::Node& value, feature_name feat) {
+feature_value feature_value_from_yaml(const YAML::Node& value, feature_name feat) {
     if (auto pe = map_find(parser_map, detail::feature_entry::for_(feat).type)) {
         return (pe->first)(feat, value);
      } else {
@@ -102,33 +98,30 @@ any feature_value_from_yaml(const YAML::Node& value, feature_name feat) {
 }
 }  // namespace
 
-features features::from_yaml(const YAML::Node& object, const name_mapper_type& name_mapper) {
+features features::from_yaml(const YAML::Node& object) {
     if (!object.IsMap()) {
         throw error::parsing_error{"features YAML node is not object"};
     }
-    auto nm = name_mapper
-            ? name_mapper
-            : DEFAULT_NAME_MAPPER;
     features res;
     res.reserve(object.size());
     for (auto&& prop: object) {
-        const auto feat = nm(prop.first.as<string>());
+        const auto feat = hrglib::from_string<feature_name>(prop.first.as<string>());
         res.emplace(feat, feature_value_from_yaml(prop.second, feat));
     }
     return res;
 }
 
-features features::from_string(string_view json, const name_mapper_type& name_mapper) {
-    return features::from_yaml(YAML::Load(string{json}), name_mapper);
+features features::from_string(string_view json) {
+    return features::from_yaml(YAML::Load(string{json}));
 }
 
-features features::from_stream(std::istream& is, const name_mapper_type& name_mapper) {
-    return features::from_yaml(YAML::Load(is), name_mapper);
+features features::from_stream(std::istream& is) {
+    return features::from_yaml(YAML::Load(is));
 }
 
-features features::from_file(string_view path, const name_mapper_type& name_mapper) {
+features features::from_file(string_view path) {
     std::ifstream fs{string{path}.c_str()};
-    return features::from_stream(fs, name_mapper);
+    return features::from_stream(fs);
 }
 
 YAML::Emitter& operator << (YAML::Emitter& out, const features& feats) {

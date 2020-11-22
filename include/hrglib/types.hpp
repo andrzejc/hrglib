@@ -7,10 +7,12 @@
  */
 #pragma once
 #include <cstddef>
+#include <string>
 
 //! @brief Root of HrgLib namespace hierarchy; contains all C++ symbols.
 namespace hrglib {
 using std::size_t;
+using std::string;
 
 enum struct relation_name;
 class relation;

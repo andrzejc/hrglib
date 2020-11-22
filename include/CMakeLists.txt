@@ -1,6 +1,20 @@
 find_package(Cog REQUIRED)
 
 add_custom_command(
+    OUTPUT hrglib/feature_headers.hpp
+    COMMAND Cog
+            -d
+            -o hrglib/feature_headers.hpp
+            -D "FEATURES_YAML=${CMAKE_CURRENT_SOURCE_DIR}/hrglib/features.yaml"
+            "${CMAKE_CURRENT_SOURCE_DIR}/hrglib/feature_headers.in.hpp"
+    DEPENDS
+        Cog
+        hrglib/feature_headers.in.hpp
+        hrglib/features.yaml
+    VERBATIM
+)
+
+add_custom_command(
     OUTPUT hrglib/feature_list.hpp
     COMMAND Cog
             -d
@@ -30,6 +44,7 @@ add_custom_command(
 
 add_custom_target(generate-headers
     DEPENDS
+        hrglib/feature_headers.hpp
         hrglib/feature_list.hpp
         hrglib/relation_list.hpp
 )

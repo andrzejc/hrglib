@@ -29,7 +29,6 @@ class graph: private std::unordered_map<relation_name, unique_ptr<relation>> {
     const node::relation_validator_type relation_validator_;
     const relation::factory_type relation_factory_;
     const relation::name_mapper_type relation_name_mapper_;
-    const features::name_mapper_type feature_name_mapper_;
 
     template<typename Relation = relation, class Utterance>
     static optional<copy_const_t<Utterance, Relation>&> get_(Utterance& u, relation_name rel) noexcept {
@@ -45,8 +44,7 @@ public:
             node::factory_type node_factory = nullptr,
             node::relation_validator_type relation_validator = nullptr,
             relation::factory_type relation_factory = nullptr,
-            relation::name_mapper_type relation_name_mapper = nullptr,
-            features::name_mapper_type feature_name_mapper = nullptr
+            relation::name_mapper_type relation_name_mapper = nullptr
     ):
         node_factory_{ node_factory
             ? std::move(node_factory)
@@ -63,10 +61,6 @@ public:
         relation_name_mapper_{ relation_name_mapper
             ? std::move(relation_name_mapper)
             : relation::DEFAULT_NAME_MAPPER
-        },
-        feature_name_mapper_{ feature_name_mapper
-            ? std::move(feature_name_mapper)
-            : features::DEFAULT_NAME_MAPPER
         }
     {}
 
@@ -75,7 +69,6 @@ public:
         node::relation_validator_type relation_validator = nullptr;
         relation::factory_type relation_factory = nullptr;
         relation::name_mapper_type relation_name_mapper = nullptr;
-        features::name_mapper_type feature_name_mapper = nullptr;
 
         builder& with_node_factory(node::factory_type nf) {
             node_factory = std::move(nf);
@@ -93,18 +86,13 @@ public:
             relation_name_mapper = std::move(rnm);
             return *this;
         }
-        builder& with_feature_name_mapper(features::name_mapper_type fnm) {
-            feature_name_mapper = std::move(fnm);
-            return *this;
-        }
 
         graph build() const & {
             return graph{
                 node_factory,
                 relation_validator,
                 relation_factory,
-                relation_name_mapper,
-                feature_name_mapper,
+                relation_name_mapper
             };
         }
 
@@ -113,8 +101,7 @@ public:
                 std::move(node_factory),
                 std::move(relation_validator),
                 std::move(relation_factory),
-                std::move(relation_name_mapper),
-                std::move(feature_name_mapper),
+                std::move(relation_name_mapper)
             };
         }
     };
@@ -149,11 +136,9 @@ public:
     constexpr const node::relation_validator_type& relation_validator() const noexcept { return relation_validator_; }
     constexpr const relation::factory_type& relation_factory() const noexcept { return relation_factory_; }
     constexpr const relation::name_mapper_type& relation_name_mapper() const noexcept { return relation_name_mapper_; }
-    constexpr const features::name_mapper_type& feature_name_mapper() const noexcept { return feature_name_mapper_; }
 
     builder to_builder() const {
         return builder{}
-            .with_feature_name_mapper(feature_name_mapper())
             .with_node_factory(node_factory())
             .with_relation_factory(relation_factory())
             .with_relation_name_mapper(relation_name_mapper())
