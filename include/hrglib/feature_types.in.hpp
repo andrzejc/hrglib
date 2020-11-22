@@ -4,8 +4,8 @@
  *     types used for defining `feature_value` type.
  */
 #pragma once
-#include <cstddef>
 #include <string>
+#include <cstddef>
 /*[[[cog
 import cog
 import yaml
@@ -31,8 +31,10 @@ for header in headers:
 namespace hrglib {
 using std::size_t;
 using std::string;
+}
 
-#define HRGLIB_FEATURE_TYPE_LIST \
+#ifndef HRGLIB_FEATURE_TYPE_LIST_DIRECT
+#define HRGLIB_FEATURE_TYPE_LIST_DIRECT \
     /*[[[cog
 num_types = len(feat_types)
 for i in range(num_types):
@@ -42,4 +44,14 @@ for i in range(num_types):
     ]]]*/
     //[[[end]]]
 
-}
+#endif
+
+#ifndef HRGLIB_FEATURE_TYPE_LIST
+#define HRGLIB_FEATURE_TYPE_LIST(visitor) \
+    /*[[[cog
+for type in feat_types:
+    cog.outl(f"visitor({type}) \\")
+    ]]]*/
+    //[[[end]]]
+
+#endif

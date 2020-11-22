@@ -55,7 +55,7 @@ template<typename FeatureType, typename = void>
 struct yaml_formatter {
     static string format(feature_name feat_label, const feature_value& val) {
         std::ostringstream s;
-        s << detail::variantimpl::get<FeatureType>(val);
+        s << boost::get<FeatureType>(val);
         return s.str();
     }
 };

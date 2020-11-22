@@ -4,10 +4,10 @@
  */
 #pragma once
 #include "hrglib/types.hpp"
-#include "hrglib/string.hpp"
 #include "hrglib/feature_name.hpp"
 #include "hrglib/relation_name.hpp"
-#include "hrglib/format.hpp"
+
+#include <boost/format.hpp>
 
 #include <stdexcept>
 #include <typeinfo>
@@ -31,7 +31,7 @@ struct bad_node: std::invalid_argument {
 struct relation_exists: bad_node {
     const relation_name relation;
     explicit relation_exists(relation_name rel):
-        bad_node{str(format("node already has relation %1%") % to_string(rel))},
+        bad_node{boost::str(boost::format("node already has relation %1%") % to_string(rel))},
         relation{rel}
     {}
 };
@@ -39,7 +39,7 @@ struct relation_exists: bad_node {
 struct bad_relation: bad_node {
     const relation_name relation;
     explicit bad_relation(relation_name rel):
-        bad_node{str(format("node in relation %1% is not allowed") % to_string(rel))},
+        bad_node{boost::str(boost::format("node in relation %1% is not allowed") % to_string(rel))},
         relation{rel}
     {}
 };
@@ -47,7 +47,7 @@ struct bad_relation: bad_node {
 struct bad_dereference: std::logic_error {
     const std::type_info& type;
     bad_dereference(const std::type_info& type):
-        logic_error{str(format("dereference of null navigator of type %1%") % demangle(type))},
+        logic_error{boost::str(boost::format("dereference of null navigator of type %1%") % demangle(type))},
         type{type}
     {}
 };
@@ -60,7 +60,7 @@ struct parsing_error: std::runtime_error {
 struct invalid_feature_name: parsing_error {
     const string feature_name;
     explicit invalid_feature_name(string feature_name):
-        parsing_error{str(format("feature name \"%1%\" is invalid") % feature_name)},
+        parsing_error{boost::str(boost::format("feature name \"%1%\" is invalid") % feature_name)},
         feature_name{std::move(feature_name)}
     {}
 };
@@ -85,7 +85,7 @@ struct invalid_feature_type: parsing_error {
             feature_name feature,
             const std::type_info& expected_type
     ):
-        invalid_feature_type{str(format("value \"%1%\" in not covertible to type %2% when reading feature %3%")
+        invalid_feature_type{boost::str(boost::format("value \"%1%\" in not covertible to type %2% when reading feature %3%")
                 % value % demangle(expected_type) % to_string(feature)),
             std::move(value), feature, expected_type
         }
@@ -99,7 +99,7 @@ struct invalid_feature_value: parsing_error {
             feature_name feature,
             string value
     ):
-        parsing_error{str(format("value \"%1%\" is not allowed for feature %2%")
+        parsing_error{boost::str(boost::format("value \"%1%\" is not allowed for feature %2%")
             % value % to_string(feature))},
         feature{feature},
         value{std::move(value)}
@@ -109,7 +109,7 @@ struct invalid_feature_value: parsing_error {
 struct invalid_relation_name: parsing_error {
     const string relation_name;
     explicit invalid_relation_name(string relation_name):
-        parsing_error{str(format("relation name \"%1%\" is invalid") % relation_name)},
+        parsing_error{boost::str(boost::format("relation name \"%1%\" is invalid") % relation_name)},
         relation_name{std::move(relation_name)}
     {}
 };

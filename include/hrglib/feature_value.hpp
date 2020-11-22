@@ -1,23 +1,14 @@
 #pragma once
 #include "hrglib/feature_list.hpp"
 #include "hrglib/feature_types.hpp"
+#include "hrglib/string.hpp"
 
-#if __has_include(<variant>)
-# include <variant>
-
-namespace hrglib { namespace detail { namespace variantimpl {
-using std::variant;
-using std::get;
-}}}
-#else
-# include <boost/variant.hpp>
-
-namespace hrglib { namespace detail { namespace variantimpl {
-using boost::variant;
-using boost::get;
-}}}
-#endif
+#include <boost/variant.hpp>
 
 namespace hrglib {
-using feature_value = detail::variantimpl::variant<HRGLIB_FEATURE_TYPE_LIST>;
+using feature_value = boost::variant<HRGLIB_FEATURE_TYPE_LIST_DIRECT>;
+
+template<>
+feature_value from_string<feature_value>(string_view s);
+string to_string(const feature_value& fv);
 }
