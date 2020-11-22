@@ -2,7 +2,6 @@
 #include "hrglib/feature_traits.hpp"
 #include "hrglib/error.hpp"
 #include "hrglib/types.hpp"
-#include "hrglib/not_null.hpp"
 #include "hrglib/map_find.hpp"
 
 #include "feature_entry.hpp"
@@ -24,7 +23,7 @@ const feature_entry feat_entries[] = {
 static_assert(std::size(feat_entries) == static_cast<std::size_t>(feature_name::COUNT),
         "feat_entries array size mismatch");
 
-const std::unordered_map<string_view, not_null<const feature_entry*>> name_to_feat = {
+const std::unordered_map<string_view, const feature_entry*> name_to_feat = {
 #define NAME_TO_FEAT(feat, type, comment) { #feat, &feat_entries[static_cast<std::size_t>(F:: feat)] },
     HRGLIB_FEATURE_LIST(NAME_TO_FEAT)
 };

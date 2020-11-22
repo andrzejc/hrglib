@@ -1,9 +1,3 @@
-if(HRGLIB_BUILD_INTERNAL_gsl-lite)
-    message(STATUS "Configuring internal gsl-lite...")
-    add_subdirectory(gsl-lite)
-    message(STATUS "Configuring gsl-lite done.")
-endif()
-
 if(HRGLIB_BUILD_INTERNAL_yaml-cpp)
     message(STATUS "Configuring internal yaml-cpp...")
     # Yaml tests use GTest built as external project which conflicts

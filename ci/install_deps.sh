@@ -27,8 +27,6 @@ function cmake_install() {
 [[ ! -x ci/install_deps.${TRAVIS_OS_NAME}.sh ]] || \
     source "ci/install_deps.${TRAVIS_OS_NAME}.sh"
 
-cmake_install deps/gsl-lite \
-    -DGSL_LITE_OPT_BUILD_TESTS=OFF
 cmake_install deps/yaml-cpp \
     -DYAML_CPP_BUILD_TESTS=OFF \
     -DYAML_CPP_BUILD_TOOLS=OFF

@@ -17,7 +17,6 @@ set_target_properties(HrgLib PROPERTIES
 target_link_libraries(HrgLib
     PUBLIC
         Boost::boost
-        gsl::gsl-lite
     PRIVATE
         yaml-cpp
 )

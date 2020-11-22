@@ -1,6 +1,5 @@
 #include "yaml-cpp_config.hpp"
 #include "hrglib/features.hpp"
-#include "hrglib/not_null.hpp"
 #include "hrglib/error.hpp"
 
 #include "feature_entry.hpp"
@@ -77,10 +76,7 @@ struct type_info_hasher {
 
 using parser_map_t = std::unordered_map<
         type_info_ref_t,
-        std::pair<
-            not_null<feature_value_from_yaml_t>,
-            not_null<feature_to_string_t>
-        >,
+        std::pair<feature_value_from_yaml_t, feature_to_string_t>,
         type_info_hasher,
         std::equal_to<std::type_info>>;
 

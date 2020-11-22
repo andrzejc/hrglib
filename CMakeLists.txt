@@ -26,7 +26,6 @@ python_virtualenv_setup(VERSION 3.6)
 
 include(FindPackageOrEnableInternalDep)
 
-find_package_or_enable_internal_dep(HRGLIB_BUILD_INTERNAL_gsl-lite gsl-lite)
 find_package_or_enable_internal_dep(HRGLIB_BUILD_INTERNAL_yaml-cpp yaml-cpp)
 if(HRGLIB_BUILD_TESTING)
     find_package_or_enable_internal_dep(HRGLIB_BUILD_INTERNAL_GTest GTest)

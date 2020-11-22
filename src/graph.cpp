@@ -1,6 +1,5 @@
 #include "yaml-cpp_config.hpp"
 #include "hrglib/graph.hpp"
-#include "hrglib/not_null.hpp"
 #include "hrglib/error.hpp"
 
 #include "yaml-cpp.hpp"
@@ -98,7 +97,7 @@ struct relation_prototype {
 };
 
 void build_graph(graph& g, std::vector<node_prototype> nps, std::vector<relation_prototype> rps) {
-    std::unordered_map<string, not_null<node*>> nodes;
+    std::unordered_map<string, node*> nodes;
     nodes.reserve(nps.size());
 
     // first create all the nodes
@@ -106,7 +105,7 @@ void build_graph(graph& g, std::vector<node_prototype> nps, std::vector<relation
         node* n = nullptr;
         for (auto&& kv: np.relations) {
             n = &g[kv.first].create(n);
-            if (!nodes.insert({kv.second, n}).second) {
+            if (!nodes.emplace(kv.second, n).second) {
                 throw error::parsing_error{"duplicate node id " + kv.second};
             }
             if (!np.features.empty()) {
