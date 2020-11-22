@@ -3,6 +3,7 @@ find_package(Boost REQUIRED)
 set(SRCS
     error.cpp
     feature_name.cpp
+    feature_value.cpp
     features.cpp
     graph.cpp
     node.cpp
