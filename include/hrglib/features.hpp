@@ -33,7 +33,10 @@ class features: private std::unordered_map<feature_name, feature_value> {
         if (auto res = map_find<base>(*this, feat)) {
             return *res;
         } else {
-            return base::emplace(feat, feature_t<feat>{std::forward<Args>(default_value)...}).first->second;
+            return base::emplace(feat, feature_value{
+                    std::in_place_index<static_cast<size_t>(feat)>,
+                    feature_t<feat>{std::forward<Args>(default_value)...}
+                }).first->second;
         }
     }
 
@@ -51,7 +54,7 @@ class features: private std::unordered_map<feature_name, feature_value> {
     template<feature_name feat, class Features>
     static optional<std::add_lvalue_reference_t<copy_const_t<Features, feature_t<feat>>>> get_(Features& feats) {
         if (auto res = map_find<copy_const_t<Features, base>>(feats, feat)) {
-            return {boost::get<feature_t<feat>>(*res)};
+            return {std::get<static_cast<size_t>(feat)>(*res)};
         } else {
             return {};
         }
@@ -77,7 +80,7 @@ public:
      */
     template<feature_name feat>
     feature_t<feat>& at() {
-        return boost::get<feature_t<feat>>(at_<feat>());
+        return std::get<static_cast<size_t>(feat)>(at_<feat>());
     }
     /**
      * @brief Optional immutable acces to raw `any` container at runtime-selectable @p feat.
@@ -130,7 +133,7 @@ public:
     template<feature_name feat>
     optional<feature_t<feat>> remove() {
         if (auto it = base::find(feat); it != base::end()) {
-            optional<feature_t<feat>> res = boost::get<feature_t<feat>>(std::move(it->second));
+            optional<feature_t<feat>> res = std::get<static_cast<size_t>(feat)>(std::move(it->second));
             base::erase(it);
             return res;
         } else {

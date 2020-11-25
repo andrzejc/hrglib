@@ -35,11 +35,12 @@ struct feature_traits_impl {
 //!     value type.
 //! @param feat unqualified (without `F::` of `feature::` part) name of feature type to implement.
 //! @param type C++ type used by the feature.
-#define HRGLIB_FEATURE_TYPE(feat, type) \
+#define HRGLIB_FEATURE_TYPE_TRAIT(feat, type) \
 template<> struct feature_traits<F:: feat> : detail::feature_traits_impl<type> {}
 
 #define HRGLIB_FEATURE_TYPE_VISITOR(feat, type, ...) \
-    HRGLIB_FEATURE_TYPE(feat, type);
+    HRGLIB_FEATURE_TYPE_TRAIT(feat, type);
 
 HRGLIB_FEATURE_LIST(HRGLIB_FEATURE_TYPE_VISITOR)
+#undef HRGLIB_FEATURE_TYPE_VISITOR
 }
