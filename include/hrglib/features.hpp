@@ -28,15 +28,20 @@ namespace hrglib {
 class features: private std::unordered_map<feature_name, feature_value> {
     using base = std::unordered_map<feature_name, feature_value>;
 
+    template<feature_name feat, typename... Args>
+    feature_value& at_(Args&&... default_value) {
+        if (auto res = map_find<base>(*this, feat)) {
+            return *res;
+        } else {
+            return base::emplace(feat, feature_t<feat>{std::forward<Args>(default_value)...}).first->second;
+        }
+    }
+
     //! @brief Insert-or-access operation which ensures that `feature_value` variant inserted at
     //!     @p feat is always initialized to contain `feature_t<feat>`.
     template<feature_name feat>
     feature_value& at_() {
-        if (auto res = map_find<base>(*this, feat)) {
-            return *res;
-        } else {
-            return base::emplace(feat, feature_t<feat>{}).first->second;
-        }
+        return at_<feat>(feature_t<feat>{});
     }
 
     //! @brief Common implementation of both non-static (const and non-const) @c get() members.

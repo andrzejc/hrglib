@@ -14,4 +14,10 @@
 - name: end_pos
   type: size_t
   description: Char index past end of this node in utterance graph.
+- name: penalty
+  type: float
+  description: Penalty.
+- name: accent
+  type: bool
+  description: Accent.
 ...

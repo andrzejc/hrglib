@@ -57,19 +57,19 @@ struct parsing_error: std::runtime_error {
     parsing_error(): parsing_error{"parsing error"} {}
 };
 
-struct invalid_feature_name: parsing_error {
+struct feature_name_error: parsing_error {
     const string feature_name;
-    explicit invalid_feature_name(string feature_name):
+    explicit feature_name_error(string feature_name):
         parsing_error{boost::str(boost::format("feature name \"%1%\" is invalid") % feature_name)},
         feature_name{std::move(feature_name)}
     {}
 };
 
-struct invalid_feature_type: parsing_error {
+struct feature_value_error: parsing_error {
     const string value;
     const feature_name feature;
     const std::type_info& expected_type;
-    explicit invalid_feature_type(
+    explicit feature_value_error(
             const string& msg,
             string value,
             feature_name feature,
@@ -80,35 +80,21 @@ struct invalid_feature_type: parsing_error {
         feature{feature},
         expected_type{expected_type}
     {}
-    explicit invalid_feature_type(
+    explicit feature_value_error(
             string value,
             feature_name feature,
             const std::type_info& expected_type
     ):
-        invalid_feature_type{boost::str(boost::format("value \"%1%\" in not covertible to type %2% when reading feature %3%")
-                % value % demangle(expected_type) % to_string(feature)),
+        feature_value_error{boost::str(boost::format("value \"%1%\" in not allowed for feature %2% of type %3%")
+                % value % to_string_view(feature) % demangle(expected_type)),
             std::move(value), feature, expected_type
         }
     {}
 };
 
-struct invalid_feature_value: parsing_error {
-    const feature_name feature;
-    const string value;
-    explicit invalid_feature_value(
-            feature_name feature,
-            string value
-    ):
-        parsing_error{boost::str(boost::format("value \"%1%\" is not allowed for feature %2%")
-            % value % to_string(feature))},
-        feature{feature},
-        value{std::move(value)}
-    {}
-};
-
-struct invalid_relation_name: parsing_error {
+struct relation_name_error: parsing_error {
     const string relation_name;
-    explicit invalid_relation_name(string relation_name):
+    explicit relation_name_error(string relation_name):
         parsing_error{boost::str(boost::format("relation name \"%1%\" is invalid") % relation_name)},
         relation_name{std::move(relation_name)}
     {}

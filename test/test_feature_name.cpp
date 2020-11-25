@@ -13,9 +13,9 @@ TEST(feature_name, from_string) {
 
     HRGLIB_FEATURE_LIST(TEST_FEATURE_BY_NAME)
 
-    EXPECT_THROW(from_string<feature_name>("foo"), error::invalid_feature_name);
-    EXPECT_THROW(from_string<feature_name>(""), error::invalid_feature_name);
-    EXPECT_THROW(from_string<feature_name>({}), error::invalid_feature_name);
+    EXPECT_THROW(from_string<feature_name>("foo"), error::feature_name_error);
+    EXPECT_THROW(from_string<feature_name>(""), error::feature_name_error);
+    EXPECT_THROW(from_string<feature_name>({}), error::feature_name_error);
 }
 
 // these tests will abort() on failed assert in debug builds

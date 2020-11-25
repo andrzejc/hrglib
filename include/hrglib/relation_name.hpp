@@ -22,7 +22,7 @@ enum struct relation_name {
     INVALID = -1
 };
 
-//! @throw error::invalid_relation_name if invalid.
+//! @throw error::relation_name_error if invalid.
 template<>
 relation_name from_string(string_view name);
 

@@ -38,7 +38,7 @@ relation_name from_string<relation_name>(string_view name) {
     if (auto rel = map_find(name_to_rel, name)) {
         return *rel;
     } else {
-        throw error::invalid_relation_name{string{name}};
+        throw error::relation_name_error{string{name}};
     }
 }
 }  // namespace hrglib

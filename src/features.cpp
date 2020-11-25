@@ -22,12 +22,13 @@ features features::from_yaml(const YAML::Node& object) {
     features res;
     res.reserve(object.size());
     for (auto&& prop: object) {
-        const auto feat = hrglib::from_string<feature_name>(prop.first.as<string>());
+        assert(prop.first.IsScalar());
+        const auto feat = hrglib::from_string<feature_name>(prop.first.Scalar());
         try {
             res.emplace(feat, parse_feature_value(feat, prop.second.as<string>()));
         } catch (YAML::BadConversion& ex) {
-            string val = prop.second.IsScalar() ? prop.second.Scalar() : "<NotScalar>";
-            throw error::invalid_feature_type{ex.what(), std::move(val), feat, detail::feature_entry::for_(feat).type};
+            string val = prop.second.IsScalar() ? prop.second.Scalar() : "<Not Scalar>";
+            throw error::feature_value_error{ex.what(), std::move(val), feat, detail::feature_entry::for_(feat).type};
         }
     }
     return res;

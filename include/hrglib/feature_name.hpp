@@ -20,7 +20,7 @@ enum struct feature_name {
 
 //! @brief Default implementation of `features::name_mapper_type`, get `feature` enumerator
 //!     value for textual @p name.
-//! @throw error::invalid_feature_name if invalid.
+//! @throw error::feature_name_error if invalid.
 template<>
 feature_name from_string<feature_name>(string_view name);
 

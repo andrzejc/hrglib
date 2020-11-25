@@ -102,11 +102,10 @@ TEST(features, from_string_throws) {
     EXPECT_THROW(features::from_string(""), error::parsing_error);
     EXPECT_THROW(features::from_string("[]"), error::parsing_error);
     EXPECT_THROW(features::from_string("1"), error::parsing_error);
-    // this would work in yaml, sad :(
-    EXPECT_THROW(features::from_string("{ \"foo\": 0 }"), error::invalid_feature_name);
-    EXPECT_THROW(features::from_string("{ \"start_pos\": \"foo\" }"), error::invalid_feature_type);
-    EXPECT_THROW(features::from_string("{ \"start_pos\": 0.1 }"), error::invalid_feature_type);
-    EXPECT_THROW(features::from_string("{ \"start_pos\": -1 }"), error::invalid_feature_type);
+    EXPECT_THROW(features::from_string("{ \"foo\": 0 }"), error::feature_name_error);
+    EXPECT_THROW(features::from_string("{ \"start_pos\": \"foo\" }"), error::feature_value_error);
+    EXPECT_THROW(features::from_string("{ \"start_pos\": 0.1 }"), error::feature_value_error);
+    EXPECT_THROW(features::from_string("{ \"start_pos\": -1 }"), error::feature_value_error);
 }
 
 TEST(features, from_file_success) {

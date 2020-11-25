@@ -38,7 +38,7 @@ const feature_entry& feature_entry::for_(string_view s) {
         assert(s == (*fe)->string);
         return **fe;
     } else {
-        throw error::invalid_feature_name{hrglib::string{s}};
+        throw error::feature_name_error{hrglib::string{s}};
     }
 }
 }  // namespace detail
