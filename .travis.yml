@@ -28,6 +28,7 @@ jobs:
     - os: windows
       compiler: clang
     - os: osx
+      osx_image: xcode11.4
       compiler: gcc
   include:
     - name: msvc14.1
